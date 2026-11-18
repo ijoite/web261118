@@ -61,10 +61,17 @@ const renderCards = list => {
  <div class="info">
      <h2>${m.title}</h2>
     <p class="year">${m.year}</p>
+    <button class="like" type="button">♥</button>
  </div>`;
         board.appendChild(card);
 
         document.querySelector("#count").textContent = list.length + "편";
+    }
+    updateLikeCount();
+    if (list.length === 0) {
+        board.classList.add("is-empty");
+    } else {
+        board.classList.remove("is-empty");
     }
 }
 
@@ -80,9 +87,36 @@ const sortBy = (list, key, desc) => {
     return copy;
 }
 // applySort : 선택 상자 값으로 정렬해서 다시 그리기(반환값 없음)
-const applySort = () => {
-    const key = document.getElementById("sort").value;
-    renderCards(sortBy(movies, key, key !== "title"));
+function applySort() {
+    renderCards(getView());
 }
-
 applySort();
+// 검색창 : 글자를 칠 때마다 제목으로 걸러서 다시 그리기(12.6절)
+document.getElementById("q").addEventListener("input", (e) => {
+    renderCards(getView());
+});
+document.getElementById("sort").addEventListener("change", applySort);
+// getView : 없음 ⇒ 검색어로 거른 뒤 선택 상자 기준으로 정렬한 새 배열
+function getView() {
+    const keyword = document.getElementById("q").value.trim().toLowerCase();
+    const found = movies.filter(m => m.title.toLowerCase().includes(keyword));
+    const key = document.getElementById("sort").value;
+    return sortBy(found, key, key !== "title");
+}
+// function (e) 로 쓰면 this는 리스너를 단 보드(.board)이고, e.target은 실제로 누른 ♥ 버튼이다.
+// 화살표 함수로 쓰면 this는 바깥의 this(window)가 되고, e.target은 똑같이 누른 ♥ 버튼이다.
+document.querySelector(".board").addEventListener("click", (e) => {
+    if (e.target.classList.contains("like")) {
+        e.target.classList.toggle("liked");
+        updateLikeCount();
+    }
+});
+function updateLikeCount() {
+    document.getElementById("likeCount").textContent = document.querySelectorAll(".liked").length;
+}
+document.getElementById("q").addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+        e.target.value = "";
+        renderCards(getView());
+    }
+});

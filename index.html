@@ -34,9 +34,11 @@
     <main>
         <section id="mine">
             <div class="toolbar">
+                <input id="q" type="search" placeholder="영화 제목 검색">
                 <p id="count"></p>
+                <p>찜 <span id="likeCount">0</span>편</p>
                 <label for="sort">정렬</label>
-                <select id="sort" onchange="applySort()">
+                <select id="sort">
                     <option value="rating">평점순</option>
                     <option value="year">최신 개봉순</option>
                     <option value="title">제목순</option>
@@ -45,6 +47,7 @@
             <div class="board">
 
             </div>
+            <p class="state-empty">조건에 맞는 영화가 없습니다.</p>
         </section>
         <section id="boxoffice">
             <h2>일별 박스오피스 TOP 5</h2>
